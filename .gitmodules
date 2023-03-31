@@ -1,3 +1,6 @@
 [submodule "online-dt"]
 	path = online-dt
 	url = https://github.com/jesn1219/online-dt
+[submodule "dt"]
+	path = dt
+	url = https://github.com/jesn1219/dt
