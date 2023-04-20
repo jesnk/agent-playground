@@ -1,0 +1,38 @@
+# Install pyvirtualdisplay
+
+sudo apt-get update
+sudo apt-get install xvfb
+pip install pyvirtualdisplay
+
+Xvfb를 설치한 후, 다음과 같은 코드를 사용하여 가상 디스플레이를 설정할 수 있습니다.
+
+from pyvirtualdisplay import Display
+
+# Set virtual display
+display = Display(visible=0, size=(1400, 900))
+display.start()
+
+레퍼런스 참조
+https://github.com/ponty/pyvirtualdisplay/tree/3.0
+
+
+
+
+# Install Chrome
+
+wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+sudo apt update
+sudo apt install google-chrome-stable
+
+
+# Ipython에서 asyncio 사용하기
+
+pip install nest_asyncio
+
+
+# tkinter 설치, pyautogui에 필요
+sudo apt-get install python3.8-tk
+
+# 한글폰트 설치
+apt-get install fonts-nanum fonts-nanum-coding fonts-nanum-extra
