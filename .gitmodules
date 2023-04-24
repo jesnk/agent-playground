@@ -4,3 +4,6 @@
 [submodule "dt"]
 	path = dt
 	url = https://github.com/jesn1219/dt
+[submodule "mathematics"]
+	path = mathematics
+	url = https://github.com/jesn1219/mathematics
