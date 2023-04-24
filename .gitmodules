@@ -7,3 +7,9 @@
 [submodule "mathematics"]
 	path = mathematics
 	url = https://github.com/jesn1219/mathematics
+[submodule "model_based_agents"]
+	path = model_based_agents
+	url = https://github.com/jesn1219/model_based_agents
+[submodule "ubuntu-controller"]
+	path = ubuntu-controller
+	url = https://github.com/jesn1219/ubuntu-controller
