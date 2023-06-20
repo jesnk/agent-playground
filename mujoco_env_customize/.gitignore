@@ -1,3 +1,4 @@
 LGS
 *.zip
 wandb
+*.pyc

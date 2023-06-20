@@ -276,7 +276,7 @@ class MujocoPyFetchEnv(get_base_fetch_env(MujocoPyRobotEnv)):
             assert object_qpos.shape == (7,)
             object_qpos[:2] = object_xpos
             self.sim.data.set_joint_qpos("object0:joint", object_qpos)
-
+        
         self.sim.forward()
         return True
 

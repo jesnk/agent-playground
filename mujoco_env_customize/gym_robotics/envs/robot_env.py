@@ -50,6 +50,7 @@ class BaseRobotEnv(GoalEnv):
         render_mode: Optional[str] = None,
         width: int = DEFAULT_SIZE,
         height: int = DEFAULT_SIZE,
+        max_episode_steps: Optional[int] = 50, # jesnk
     ):
         if model_path.startswith("/"):
             self.fullpath = model_path
@@ -73,6 +74,9 @@ class BaseRobotEnv(GoalEnv):
 
         self.goal = np.zeros(0)
         obs = self._get_obs()
+        
+        self.max_episode_steps = max_episode_steps # jesnk
+        self.episode_step = 0 #jesnk
 
         assert (
             int(np.round(1.0 / self.dt)) == self.metadata["render_fps"]
@@ -99,7 +103,8 @@ class BaseRobotEnv(GoalEnv):
     # ----------------------------
     def compute_terminated(self, achieved_goal, desired_goal, info):
         """All the available environments are currently continuing tasks and non-time dependent. The objective is to reach the goal for an indefinite period of time."""
-        return False
+        raise NotImplementedError()
+        #return False
 
     def compute_truncated(self, achievec_goal, desired_goal, info):
         """The environments will be truncated only if setting a time limit with max_steps which will automatically wrap the environment in a gym TimeLimit wrapper."""
@@ -123,13 +128,18 @@ class BaseRobotEnv(GoalEnv):
 
         info = {
             "is_success": self._is_success(obs["achieved_goal"], self.goal),
-
+            "episode_step": self.episode_step, # jesnk
         }
-
         terminated = self.compute_terminated(obs["achieved_goal"], self.goal, info)
         truncated = self.compute_truncated(obs["achieved_goal"], self.goal, info)
+
         info['is_truncated'] = truncated # jesnk : add is_truncated to info
         reward = self.compute_reward(obs["achieved_goal"], self.goal, info)
+        
+        # jesnk : add check for max_episode_steps, if reached, terminate
+        self.episode_step += 1 # jesnk
+        if self.episode_step >= self.max_episode_steps: # jesnk
+            terminated = True # jesnk
 
         return obs, reward, terminated, truncated, info #truncated, info # jesnk : add is_truncated to info, remove truncated
 
@@ -149,6 +159,7 @@ class BaseRobotEnv(GoalEnv):
         while not did_reset_sim:
             did_reset_sim = self._reset_sim()
         self.goal = self._sample_goal().copy()
+        self.episode_step = 0 # jesnk
         obs = self._get_obs()
         if self.render_mode == "human":
             self.render()
