@@ -17,14 +17,13 @@ env = MujocoPyFetchReachEnv()
 
 log_dir = "./sac_fetch_reach_tensorboard/"
 max_steps = 100_000
-reward_type = 'dense'
-distance_threshold = 0.05
+reward_type = 'sparse'
+#distance_threshold = 0.05
 config = {
     "policy_type": "PPO",
     "total_timesteps": max_steps,
     "env_name": "FetchReach",
     "reward_type": reward_type,
-    "disance_threshold": distance_threshold,
 }
 run = wandb.init(
     project="sb3",
@@ -38,7 +37,7 @@ run = wandb.init(
 
 # init mujoco fetch environment
 # init mujoco fetch environment
-env = MujocoPyFetchReachEnv(reward_type=config['reward_type'],distance_threshold=0.05)
+env = MujocoPyFetchReachEnv(reward_type=config['reward_type'])
 env = Monitor(env, log_dir)
 #env = TimeLimit(env, max_episode_steps=100)
 env = DummyVecEnv([lambda: env])
