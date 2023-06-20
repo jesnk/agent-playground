@@ -15,7 +15,7 @@ from gym.wrappers import TimeLimit
 # init mujoco fetch enviroenment
 env = MujocoPyFetchReachEnv()
 
-log_dir = "./sac_fetch_reach_tensorboard/"
+log_dir = "./tb_log/"
 max_steps = 100_000
 reward_type = 'sparse'
 #distance_threshold = 0.05
