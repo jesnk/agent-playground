@@ -2,3 +2,4 @@ LGS
 *.zip
 wandb
 *.pyc
+__pycache__
