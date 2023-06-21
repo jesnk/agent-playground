@@ -3,3 +3,4 @@ LGS
 wandb
 *.pyc
 __pycache__
+tb_log/monitor.csv
