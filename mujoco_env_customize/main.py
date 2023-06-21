@@ -10,14 +10,15 @@ import wandb
 import matplotlib.pyplot as plt
 from gym_robotics.envs.fetch.reach import MujocoPyFetchReachEnv
 from gym.wrappers import TimeLimit
+import datetime
 
 
 # init mujoco fetch enviroenment
-env = MujocoPyFetchReachEnv()
-
 log_dir = "./tb_log/"
 max_steps = 100_000
-reward_type = 'sparse'
+reward_type = 'dense'
+time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+
 #distance_threshold = 0.05
 config = {
     "policy_type": "PPO",
@@ -25,17 +26,17 @@ config = {
     "env_name": "FetchReach",
     "reward_type": reward_type,
 }
+name = f"{config['policy_type']}-{config['env_name']}-{config['reward_type']}"
 run = wandb.init(
     project="sb3",
-    name=f"{config['policy_type']}-{config['env_name']}",
+    name= name,
     config=config,
     sync_tensorboard=True,  # auto-upload sb3's tensorboard metrics
     monitor_gym=True,  # auto-upload the videos of agents playing the game
-    save_code=True,  # optional
+    save_code=True,  # optional 
 )
 
 
-# init mujoco fetch environment
 # init mujoco fetch environment
 env = MujocoPyFetchReachEnv(reward_type=config['reward_type'])
 env = Monitor(env, log_dir)
@@ -66,4 +67,4 @@ model.learn(total_timesteps=max_steps,
             eval_env=env_eval,
             )
 
-model.save(f"sac_fetch_reach_{max_steps}")
+model.save(f"./checkpoint/{name}-{time}")
