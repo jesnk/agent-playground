@@ -9,24 +9,46 @@ import wandb
 # pip install gym-robotics
 import matplotlib.pyplot as plt
 from gym_robotics.envs.fetch.reach import MujocoPyFetchReachEnv
+from gym_robotics.envs.fetch.push import MujocoPyFetchPushEnv
 from gym.wrappers import TimeLimit
+from stable_baselines3 import HerReplayBuffer, DDPG, DQN, SAC, TD3
+from stable_baselines3.her.goal_selection_strategy import GoalSelectionStrategy
 import datetime
+log_dir = "./tb_log/"
+
+goal_selection_strategy = "future" # equivalent to GoalSelectionStrategy.FUTURE
 
 
 # init mujoco fetch enviroenment
-log_dir = "./tb_log/"
+env_name = 'FetchReach'
+
+if env_name == 'FetchReach':
+    env_class = MujocoPyFetchReachEnv
+elif env_name == 'FetchPush':
+    env_class = MujocoPyFetchPushEnv
+else :
+    raise ValueError(f"env_name: {env_name} is not supported")
+
+model_name = 'SAC'
+
+
 max_steps = 100_000
 reward_type = 'dense'
+action_scale = 0.1
+
 time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
 #distance_threshold = 0.05
 config = {
-    "policy_type": "PPO",
+    "policy_type": model_name,
     "total_timesteps": max_steps,
-    "env_name": "FetchReach",
+    "env_name": env_name,
     "reward_type": reward_type,
+    "max_steps": max_steps,
+    "action_scale": action_scale,
 }
-name = f"{config['policy_type']}-{config['env_name']}-{config['reward_type']}"
+
+name = f"{config['env_name']}-{config['policy_type']}-{config['reward_type']}"
 run = wandb.init(
     project="sb3",
     name= name,
@@ -38,23 +60,34 @@ run = wandb.init(
 
 
 # init mujoco fetch environment
-env = MujocoPyFetchReachEnv(reward_type=config['reward_type'])
+env = env_class(reward_type=config['reward_type'], max_episode_steps=200, action_scale=config['action_scale'])
 env = Monitor(env, log_dir)
-#env = TimeLimit(env, max_episode_steps=100)
+env = TimeLimit(env, max_episode_steps=100)
 env = DummyVecEnv([lambda: env])
 
-env_eval = MujocoPyFetchReachEnv(reward_type=config['reward_type'])
+env_eval = env_class(reward_type=config['reward_type'],max_episode_steps=200, action_scale=config['action_scale'])
 env_eval = Monitor(env_eval, log_dir)
-#env_eval = TimeLimit(env_eval, max_episode_steps=100)
+env_eval = TimeLimit(env_eval, max_episode_steps=100)
 env_eval = DummyVecEnv([lambda: env_eval])
 
 env.render_mode = 'rgb_array'
 # wrap environment
 # init model
-model = SAC(MlpPolicy, env, verbose=1, 
+
+if model_name == 'SAC-HER':
+    model = SAC(MlpPolicy, env, verbose=1, 
+            replay_buffer_class=HerReplayBuffer,
+            # Parameters for HER
+            replay_buffer_kwargs=dict(
+                n_sampled_goal=4,
+                goal_selection_strategy=goal_selection_strategy,),
             device='cuda',wandb_log=True)
-#model = PPO(MlpPolicy, env, verbose=1,
-#            device='cuda')
+
+elif model_name == 'SAC':
+    model = SAC(MlpPolicy, env, verbose=1,
+                device='cuda',wandb_log=True)
+else :
+    raise ValueError(f"model_name: {model_name} is not supported")
 
 # train model
 model.learn(total_timesteps=max_steps, 
