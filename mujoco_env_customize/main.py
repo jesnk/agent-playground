@@ -32,8 +32,8 @@ else :
 model_name = 'SAC'
 
 
-max_steps = 100_000
-reward_type = 'dense'
+max_steps = 1_000_000
+reward_type = 'sparse'
 action_scale = 0.1
 
 time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -46,6 +46,7 @@ config = {
     "reward_type": reward_type,
     "max_steps": max_steps,
     "action_scale": action_scale,
+    "timestemp": time,
 }
 
 name = f"{config['env_name']}-{config['policy_type']}-{config['reward_type']}"
