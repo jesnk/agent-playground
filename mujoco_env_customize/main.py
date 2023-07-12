@@ -32,7 +32,7 @@ else :
 model_name = 'SAC'
 
 
-max_steps = 1_000_000
+max_steps = 2_000_000
 reward_type = 'sparse'
 action_scale = 0.1
 
