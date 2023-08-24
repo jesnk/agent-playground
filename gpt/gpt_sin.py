@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
 from transformers import GPT2Tokenizer, GPT2LMHeadModel, TrainingArguments, Trainer
 
+
 # 1. 데이터 생성
 pi = np.pi
 x = np.linspace(-pi, pi, 1000)

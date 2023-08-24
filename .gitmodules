@@ -13,3 +13,6 @@
 [submodule "ubuntu-controller"]
 	path = ubuntu-controller
 	url = https://github.com/jesn1219/ubuntu-controller
+[submodule "paper_1"]
+	path = paper_1
+	url = https://github.com/jesn1219/paper_1
